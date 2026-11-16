@@ -229,7 +229,7 @@
           </button>
         </div>
         <div id="tx-list" class="space-y-3 divide-y divide-slate-100">
-          <!-- Rendered items -->
+          <!-- Rendered items with delete button -->
         </div>
       </div>
 
@@ -408,22 +408,27 @@
         }
 
         const item = document.createElement('div');
-        item.className = 'pt-2 flex items-center justify-between';
+        item.className = 'pt-2 flex items-center justify-between group';
         item.innerHTML = `
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl ${t.type === 'in' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'} flex items-center justify-center text-sm shadow-sm">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 rounded-xl ${t.type === 'in' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'} flex items-center justify-center text-sm shadow-sm flex-shrink-0">
               ${t.icon || (t.type === 'in' ? '💰' : '💳')}
             </div>
-            <div>
-              <p class="text-xs font-bold text-slate-800">${t.desc}</p>
-              <p class="text-[10px] text-slate-400">${t.category || ''} • ${t.account}</p>
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-slate-800 truncate">${t.desc}</p>
+              <p class="text-[10px] text-slate-400 truncate">${t.category || ''} • ${t.account}</p>
             </div>
           </div>
-          <div class="text-right">
-            <p class="text-xs font-bold ${t.type === 'in' ? 'text-emerald-600' : 'text-slate-800'}">
-              ${t.type === 'in' ? '+' : '-'}${formatRupiah(amt)}
-            </p>
-            <p class="text-[10px] text-slate-400">${t.date}</p>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <div class="text-right">
+              <p class="text-xs font-bold ${t.type === 'in' ? 'text-emerald-600' : 'text-slate-800'}">
+                ${t.type === 'in' ? '+' : '-'}${formatRupiah(amt)}
+              </p>
+              <p class="text-[10px] text-slate-400">${t.date}</p>
+            </div>
+            <button onclick="deleteTransaction(${t.id})" class="w-7 h-7 rounded-lg flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 active:scale-95 transition" title="Hapus transaksi">
+              <i class="fa-regular fa-trash-can text-xs"></i>
+            </button>
           </div>
         `;
         txList.appendChild(item);
@@ -437,6 +442,26 @@
 
       renderCategoryChartAndLegend(categoryTotals, totalOut);
       localStorage.setItem('seef_transactions', JSON.stringify(transactions));
+    }
+
+    function deleteTransaction(id) {
+      const target = transactions.find(t => String(t.id) === String(id));
+      const desc = target ? target.desc : 'transaksi ini';
+      
+      if (confirm(`Yakin ingin menghapus "${desc}"?`)) {
+        transactions = transactions.filter(t => String(t.id) !== String(id));
+        calculateAndRender();
+
+        const url = localStorage.getItem('seef_sync_url');
+        if (url) {
+          fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete', id: id })
+          }).catch(err => console.log('Hapus lokal berhasil'));
+        }
+      }
     }
 
     function renderCategoryChartAndLegend(cats, totalOut) {
@@ -544,6 +569,9 @@
       banner.classList.remove('-translate-y-36');
       banner.classList.add('translate-y-0');
 
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
       const autoTx = {
         id: Date.now(),
         type: 'out',
@@ -551,7 +579,7 @@
         account: isMandiri ? 'Bank Mandiri' : 'Bank BCA',
         desc: isMandiri ? 'QRIS Mandiri (Maya)' : 'Tagihan BCA (Ozik)',
         amount: isMandiri ? 45000 : 120000,
-        date: 'Baru saja',
+        date: dateStr,
         icon: isMandiri ? '🛍️' : '📄'
       };
 
@@ -571,6 +599,8 @@
     function openQuickMandiriPrompt() {
       const nominal = prompt("Masukkan nominal pengeluaran Bank Mandiri Livin':", "50000");
       if (nominal) {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
         const autoTx = {
           id: Date.now(),
           type: 'out',
@@ -578,7 +608,7 @@
           account: 'Bank Mandiri',
           desc: 'Pengeluaran Mandiri Livin',
           amount: parseInt(nominal),
-          date: 'Hari ini',
+          date: dateStr,
           icon: '🏦'
         };
         transactions.unshift(autoTx);
@@ -645,7 +675,6 @@
       }
       calculateAndRender();
 
-      // Chart.js Bar Trend
       const ctxBar = document.getElementById('cashflowChart').getContext('2d');
       new Chart(ctxBar, {
         type: 'bar',

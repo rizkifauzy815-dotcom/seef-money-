@@ -7,7 +7,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="See'f Money">
-  <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -39,7 +38,7 @@
       <div class="flex-1 min-w-0">
         <div class="flex justify-between items-baseline mb-0.5">
           <span class="text-xs font-bold text-slate-800 flex items-center gap-1">
-            <span>Bank Mandiri</span>
+            <span id="notif-bank">Bank Mandiri</span>
             <span class="text-[10px] text-slate-400 font-normal">• Gmail sync</span>
           </span>
           <span class="text-[10px] text-slate-400">Baru saja</span>
@@ -63,7 +62,7 @@
         <span class="text-xs font-bold text-slate-700">Beranda</span>
       </div>
       <div class="flex items-center gap-2.5">
-        <button onclick="triggerTestNotif()" class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:bg-slate-100 active:scale-95 text-xs transition" title="Tes Notifikasi Gmail Mandiri">
+        <button onclick="triggerTestNotif()" class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:bg-slate-100 active:scale-95 text-xs transition" title="Tes Notifikasi Gmail Mandiri / BCA">
           <i class="fa-regular fa-bell"></i>
         </button>
         <button onclick="openModal('db-modal')" class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-emerald-600 hover:bg-emerald-50 active:scale-95 text-xs transition" title="Koneksi Cloud Sync">
@@ -81,7 +80,7 @@
       <!-- Alert Banner -->
       <div id="welcome-alert" class="bg-emerald-50 border border-emerald-200/60 rounded-xl px-4 py-2.5 flex items-center justify-between text-xs text-emerald-800 font-medium">
         <span class="flex items-center gap-1.5">
-          <span>Data tersinkron otomatis antar perangkat!</span>
+          <span>Data tersinkron otomatis antar HP Maya & Ozik!</span>
           <span class="text-rose-500">💖</span>
         </span>
         <button onclick="document.getElementById('welcome-alert').style.display='none'" class="text-emerald-500 hover:text-emerald-700">
@@ -96,7 +95,7 @@
           <span>Halo, Maya & Ozik!</span>
           <span class="animate-bounce">👋</span>
         </h1>
-        <p class="text-xs text-slate-400 font-medium mt-0.5">Yuk pantau keuangan bersama secara real-time.</p>
+        <p class="text-xs text-slate-400 font-medium mt-0.5">Pantauan kas Bank Mandiri & Bank BCA secara real-time.</p>
       </section>
 
       <!-- Quick Action Buttons -->
@@ -106,13 +105,13 @@
           <span>Catat transaksi</span>
         </button>
         <div class="grid grid-cols-2 gap-2">
-          <button onclick="openModal('add-tx-modal')" class="bg-white border border-slate-200/90 hover:bg-slate-50 py-2.5 px-3 rounded-xl font-bold text-xs text-slate-700 flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.99] transition">
-            <span class="text-slate-400">+</span>
-            <span>Input manual</span>
+          <button onclick="fetchFromCloud()" class="bg-white border border-slate-200/90 hover:bg-slate-50 py-2.5 px-3 rounded-xl font-bold text-xs text-slate-700 flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.99] transition">
+            <span class="text-emerald-500">🔄</span>
+            <span>Segarkan Cloud</span>
           </button>
           <button onclick="openQuickMandiriPrompt()" class="bg-white border border-slate-200/90 hover:bg-slate-50 py-2.5 px-3 rounded-xl font-bold text-xs text-slate-700 flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.99] transition">
             <span class="text-amber-500">✨</span>
-            <span>Catat Cepat Mandiri</span>
+            <span>Catat Cepat Livin'</span>
           </button>
         </div>
       </div>
@@ -124,7 +123,7 @@
             <span>✨</span> FINANCIAL SNAPSHOT
           </span>
           <h2 class="text-base font-black text-slate-800 leading-snug mt-1">Keep your money happy & healthy!</h2>
-          <p class="text-[11px] text-slate-500 mt-1 font-medium leading-relaxed">Setiap catatan kecil membawa kalian berdua lebih dekat ke mimpi bersama.</p>
+          <p class="text-[11px] text-slate-500 mt-1 font-medium leading-relaxed">Setiap mutasi tercatat langsung ke Google Sheets.</p>
           <a href="#transaksi" class="inline-flex items-center gap-1 text-xs font-bold text-purple-600 mt-2.5 hover:underline">
             <span>Lihat mutasi</span>
             <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
@@ -145,9 +144,9 @@
           <div class="w-8 h-8 rounded-xl bg-pink-50 border border-pink-100 flex items-center justify-center text-sm">
             👛
           </div>
-          <span class="text-[11px] font-semibold text-slate-400">Total Gabungan</span>
+          <span class="text-[11px] font-semibold text-slate-400">Mandiri + BCA + E-Wallet</span>
         </div>
-        <div class="text-[11px] font-medium text-slate-400">Total saldo</div>
+        <div class="text-[11px] font-medium text-slate-400">Total saldo gabungan</div>
         <div id="display-saldo" class="text-2xl font-black text-slate-900 tracking-tight my-0.5">Rp 0</div>
         <div class="text-[11px] text-slate-400 font-medium">Uang tersisa saat ini</div>
       </div>
@@ -161,7 +160,7 @@
             </div>
             <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Pemasukan</span>
           </div>
-          <span class="text-[10px] text-slate-400 font-medium">Bulan ini</span>
+          <span class="text-[10px] text-slate-400 font-medium">Total masuk</span>
           <div id="display-in" class="text-sm font-black text-slate-900 mt-0.5">Rp 0</div>
         </div>
 
@@ -172,7 +171,7 @@
             </div>
             <span class="text-[10px] font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-md">Pengeluaran</span>
           </div>
-          <span class="text-[10px] text-slate-400 font-medium">Bulan ini</span>
+          <span class="text-[10px] text-slate-400 font-medium">Total keluar</span>
           <div id="display-out" class="text-sm font-black text-slate-900 mt-0.5">Rp 0</div>
         </div>
       </div>
@@ -192,6 +191,30 @@
         </div>
       </div>
 
+      <!-- Expense By Category Card -->
+      <div class="ios-card p-4">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <span>🎯</span> Pengeluaran per kategori
+            </div>
+            <p class="text-[10px] text-slate-400">Belanja, Tagihan, Makan, Hiburan & Lainnya</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between gap-4 py-2">
+          <div class="w-28 h-28 relative flex-shrink-0">
+            <canvas id="categoryChart"></canvas>
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+              <span class="text-[9px] text-slate-400 font-semibold leading-tight">Total keluar</span>
+              <span id="donut-total" class="text-xs font-black text-slate-800">Rp 0</span>
+            </div>
+          </div>
+          <div class="flex-1 space-y-1.5 text-xs font-semibold" id="category-legend">
+            <!-- Dynamic Legend -->
+          </div>
+        </div>
+      </div>
+
       <!-- Recent Transactions List -->
       <div class="ios-card p-4" id="transaksi">
         <div class="flex items-center justify-between mb-3">
@@ -199,14 +222,14 @@
             <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <span>🧾</span> Transaksi terbaru
             </div>
-            <p class="text-[10px] text-slate-400">Tersimpan di memori perangkat & Cloud</p>
+            <p class="text-[10px] text-slate-400">Tersinkron dengan Google Sheets</p>
           </div>
           <button onclick="resetDataDefault()" class="text-[10px] font-semibold text-rose-500 hover:underline">
-            Reset Data
+            Reset Cache
           </button>
         </div>
         <div id="tx-list" class="space-y-3 divide-y divide-slate-100">
-          <!-- Transaksi akan dirender oleh JavaScript dari LocalStorage / Database -->
+          <!-- Rendered items -->
         </div>
       </div>
 
@@ -246,41 +269,52 @@
         </div>
         <form id="tx-form" onsubmit="handleNewTransaction(event)" class="space-y-3 text-xs">
           <div>
-            <label class="block font-semibold text-slate-600 mb-1">Tipe</label>
+            <label class="block font-semibold text-slate-600 mb-1">Tipe Mutasi</label>
             <div class="grid grid-cols-2 gap-2">
               <label class="border rounded-xl p-2.5 flex items-center justify-center gap-2 font-bold cursor-pointer has-[:checked]:bg-rose-50 has-[:checked]:border-rose-400 has-[:checked]:text-rose-600">
-                <input type="radio" name="tx_type" value="out" checked class="hidden"> Pengeluaran
+                <input type="radio" name="tx_type" value="out" checked class="hidden" onchange="toggleCategorySelect(true)"> Pengeluaran
               </label>
               <label class="border rounded-xl p-2.5 flex items-center justify-center gap-2 font-bold cursor-pointer has-[:checked]:bg-emerald-50 has-[:checked]:border-emerald-400 has-[:checked]:text-emerald-600">
-                <input type="radio" name="tx_type" value="in" class="hidden"> Pemasukan
+                <input type="radio" name="tx_type" value="in" class="hidden" onchange="toggleCategorySelect(false)"> Pemasukan
               </label>
             </div>
           </div>
           <div>
+            <label class="block font-semibold text-slate-600 mb-1">Kategori</label>
+            <select id="tx_category" class="w-full border rounded-xl p-2.5 bg-slate-50 font-medium">
+              <option value="Belanja">🛍️ Belanja</option>
+              <option value="Tagihan">📄 Tagihan (Listrik, Wifi, Air)</option>
+              <option value="Makan">🍜 Makanan & Minuman</option>
+              <option value="Hiburan">🍿 Hiburan / Rekreasi</option>
+              <option value="Transportasi">🛵 Transportasi / Bensin</option>
+              <option value="Lainnya">📦 Lainnya</option>
+            </select>
+          </div>
+          <div>
             <label class="block font-semibold text-slate-600 mb-1">Akun / Bank</label>
             <select id="tx_account" class="w-full border rounded-xl p-2.5 bg-slate-50 font-medium">
-              <option value="Bank Mandiri">Bank Mandiri (Livin')</option>
-              <option value="Bank BCA">Bank BCA (myBCA)</option>
-              <option value="E-Wallet">E-Wallet (GoPay/Shopee)</option>
-              <option value="Tunai">Uang Tunai</option>
+              <option value="Bank Mandiri">Bank Mandiri (Maya)</option>
+              <option value="Bank BCA">Bank BCA (Ozik)</option>
+              <option value="E-Wallet">E-Wallet (GoPay / ShopeePay)</option>
+              <option value="Tunai">Dompet Tunai</option>
             </select>
           </div>
           <div>
             <label class="block font-semibold text-slate-600 mb-1">Keterangan</label>
-            <input type="text" id="tx_desc" placeholder="Contoh: Belanja bahan masak / Kopi" required class="w-full border rounded-xl p-2.5 bg-slate-50 font-medium">
+            <input type="text" id="tx_desc" placeholder="Contoh: Belanja Bulanan / Makan Siang" required class="w-full border rounded-xl p-2.5 bg-slate-50 font-medium">
           </div>
           <div>
             <label class="block font-semibold text-slate-600 mb-1">Nominal (Rp)</label>
-            <input type="number" id="tx_amount" placeholder="Contoh: 35000" required class="w-full border rounded-xl p-2.5 bg-slate-50 text-sm font-bold">
+            <input type="number" id="tx_amount" placeholder="Contoh: 75000" required class="w-full border rounded-xl p-2.5 bg-slate-50 text-sm font-bold">
           </div>
-          <button type="submit" class="w-full bg-[#7c5cfc] hover:bg-[#6c48f9] text-white py-3 rounded-xl font-bold text-sm shadow-md transition">
+          <button type="submit" id="btn-submit-tx" class="w-full bg-[#7c5cfc] hover:bg-[#6c48f9] text-white py-3 rounded-xl font-bold text-sm shadow-md transition">
             Simpan Transaksi
           </button>
         </form>
       </div>
     </div>
 
-    <!-- Modal Konfigurasi Cloud Database (Sinkron HP Maya & Ozik) -->
+    <!-- Modal Konfigurasi Cloud Database -->
     <div id="db-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
       <div class="bg-white w-full max-w-sm rounded-3xl p-5 space-y-3.5 shadow-2xl">
         <div class="flex items-center justify-between border-b pb-2">
@@ -290,12 +324,12 @@
           <button onclick="closeModal('db-modal')" class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">✕</button>
         </div>
         <p class="text-xs text-slate-500 leading-relaxed">
-          Secara default, data tersimpan di memori HP masing-masing. Untuk menghubungkan HP Maya & HP Ozik secara real-time, Anda dapat menautkan URL endpoint database (seperti Supabase / Google Sheet Web App).
+          Masukkan Web App URL Apps Script dari spreadsheet <b>Database See'f Money</b> agar HP Maya & HP Ozik saling tersinkron otomatis.
         </p>
         <div class="space-y-2 text-xs">
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Webhook URL / API Sync</label>
-            <input type="text" id="cfg_sync_url" placeholder="https://..." class="w-full border rounded-xl p-2 bg-slate-50">
+            <label class="block font-bold text-slate-700 mb-1">Web App URL (/exec)</label>
+            <input type="text" id="cfg_sync_url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full border rounded-xl p-2 bg-slate-50 text-xs">
           </div>
           <button onclick="saveSyncConfig()" class="w-full bg-purple-600 text-white font-bold py-2.5 rounded-xl hover:bg-purple-700 transition">
             Simpan & Hubungkan
@@ -315,8 +349,11 @@
           <a href="#" onclick="closeModal('menu-modal')" class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 border border-slate-100">
             <span>🏡 Dashboard Utama</span> <span class="text-slate-300">›</span>
           </a>
-          <button onclick="triggerTestNotif(); closeModal('menu-modal')" class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 border border-slate-100 text-left">
-            <span>✨ Tes Notifikasi Mandiri (Gmail)</span> <span class="text-slate-300">›</span>
+          <button onclick="triggerTestNotif('Mandiri'); closeModal('menu-modal')" class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 border border-slate-100 text-left">
+            <span>💳 Simulasi Notif Mandiri (Maya)</span> <span class="text-slate-300">›</span>
+          </button>
+          <button onclick="triggerTestNotif('BCA'); closeModal('menu-modal')" class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 border border-slate-100 text-left">
+            <span>🏦 Simulasi Notif BCA (Ozik)</span> <span class="text-slate-300">›</span>
           </button>
           <button onclick="openModal('db-modal'); closeModal('menu-modal')" class="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 border border-slate-100 text-left">
             <span>☁️ Pengaturan Sinkronisasi Dua HP</span> <span class="text-slate-300">›</span>
@@ -328,33 +365,46 @@
   </div>
 
   <script>
-    // Initial Seed Data jika LocalStorage masih kosong
     const DEFAULT_TRANSACTIONS = [
-      { id: 1, type: 'in', desc: 'Gaji Bulanan', account: 'Bank Mandiri', amount: 6500000, date: '11 Nov 2026', icon: '💼' },
-      { id: 2, type: 'out', desc: 'Ojek ke kantor', account: 'Bank Mandiri', amount: 18000, date: '11 Nov 2026', icon: '🛵' },
-      { id: 3, type: 'out', desc: 'Kopi & croissant', account: 'E-Wallet', amount: 35000, date: '11 Nov 2026', icon: '☕' },
-      { id: 4, type: 'out', desc: 'Sweater baru', account: 'Bank BCA', amount: 159000, date: '10 Nov 2026', icon: '👕' }
+      { id: 1, type: 'in', category: 'Gaji', desc: 'Gaji bulanan', account: 'Bank Mandiri', amount: 6500000, date: '11 Nov 2026', icon: '💼' },
+      { id: 2, type: 'out', category: 'Belanja', desc: 'Sweater baru', account: 'Bank BCA', amount: 159000, date: '10 Nov 2026', icon: '🛍️' },
+      { id: 3, type: 'out', category: 'Tagihan', desc: 'Listrik & Wifi', account: 'Bank Mandiri', amount: 320000, date: '10 Nov 2026', icon: '📄' },
+      { id: 4, type: 'out', category: 'Makan', desc: 'Kopi & croissant', account: 'E-Wallet', amount: 35000, date: '11 Nov 2026', icon: '🍜' },
+      { id: 5, type: 'out', category: 'Transportasi', desc: 'Ojek ke kantor', account: 'Bank Mandiri', amount: 18000, date: '11 Nov 2026', icon: '🛵' }
     ];
 
     let transactions = JSON.parse(localStorage.getItem('seef_transactions')) || DEFAULT_TRANSACTIONS;
+    let categoryChartInstance = null;
 
     function formatRupiah(num) {
-      return 'Rp ' + Number(num).toLocaleString('id-ID');
+      return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
+    }
+
+    function toggleCategorySelect(isOut) {
+      document.getElementById('tx_category').disabled = !isOut;
+      document.getElementById('tx_category').parentElement.style.opacity = isOut ? '1' : '0.4';
     }
 
     function calculateAndRender() {
-      let saldo = 12335000;
       let totalIn = 0;
       let totalOut = 0;
+      let categoryTotals = { 'Belanja': 0, 'Tagihan': 0, 'Makan': 0, 'Hiburan': 0, 'Transportasi': 0, 'Lainnya': 0 };
 
       const txList = document.getElementById('tx-list');
       txList.innerHTML = '';
 
       transactions.forEach(t => {
+        const amt = Number(t.amount) || 0;
         if (t.type === 'in') {
-          totalIn += t.amount;
+          totalIn += amt;
         } else {
-          totalOut += t.amount;
+          totalOut += amt;
+          const cat = t.category || 'Lainnya';
+          if (categoryTotals[cat] !== undefined) {
+            categoryTotals[cat] += amt;
+          } else {
+            categoryTotals['Lainnya'] += amt;
+          }
         }
 
         const item = document.createElement('div');
@@ -366,12 +416,12 @@
             </div>
             <div>
               <p class="text-xs font-bold text-slate-800">${t.desc}</p>
-              <p class="text-[10px] text-slate-400">${t.account}</p>
+              <p class="text-[10px] text-slate-400">${t.category || ''} • ${t.account}</p>
             </div>
           </div>
           <div class="text-right">
             <p class="text-xs font-bold ${t.type === 'in' ? 'text-emerald-600' : 'text-slate-800'}">
-              ${t.type === 'in' ? '+' : '-'}${formatRupiah(t.amount)}
+              ${t.type === 'in' ? '+' : '-'}${formatRupiah(amt)}
             </p>
             <p class="text-[10px] text-slate-400">${t.date}</p>
           </div>
@@ -379,29 +429,100 @@
         txList.appendChild(item);
       });
 
-      const finalSaldo = saldo + (totalIn - 6500000) - (totalOut - 212000);
+      const finalSaldo = totalIn - totalOut;
       document.getElementById('display-saldo').innerText = formatRupiah(finalSaldo);
-      document.getElementById('display-in').innerText = formatRupiah(totalIn || 6950000);
-      document.getElementById('display-out').innerText = formatRupiah(totalOut || 1140000);
+      document.getElementById('display-in').innerText = formatRupiah(totalIn);
+      document.getElementById('display-out').innerText = formatRupiah(totalOut);
+      document.getElementById('donut-total').innerText = formatRupiah(totalOut);
 
+      renderCategoryChartAndLegend(categoryTotals, totalOut);
       localStorage.setItem('seef_transactions', JSON.stringify(transactions));
+    }
+
+    function renderCategoryChartAndLegend(cats, totalOut) {
+      const keys = ['Belanja', 'Tagihan', 'Makan', 'Transportasi', 'Hiburan', 'Lainnya'];
+      const colors = ['#c084fc', '#fde047', '#fb923c', '#38bdf8', '#f472b6', '#94a3b8'];
+      const dataValues = keys.map(k => cats[k] || 0);
+
+      const legendContainer = document.getElementById('category-legend');
+      legendContainer.innerHTML = '';
+
+      keys.forEach((k, idx) => {
+        const val = cats[k] || 0;
+        const pct = totalOut > 0 ? Math.round((val / totalOut) * 100) : 0;
+        const row = document.createElement('div');
+        row.className = 'flex items-center justify-between';
+        row.innerHTML = `
+          <span class="flex items-center gap-1.5 text-slate-600">
+            <span class="w-2 h-2 rounded-full" style="background-color: ${colors[idx]}"></span> ${k}
+          </span>
+          <span class="text-slate-800 font-bold">${pct}%</span>
+        `;
+        legendContainer.appendChild(row);
+      });
+
+      if (categoryChartInstance) {
+        categoryChartInstance.data.datasets[0].data = dataValues;
+        categoryChartInstance.update();
+      } else {
+        const ctxPie = document.getElementById('categoryChart').getContext('2d');
+        categoryChartInstance = new Chart(ctxPie, {
+          type: 'doughnut',
+          data: {
+            labels: keys,
+            datasets: [{
+              data: dataValues,
+              backgroundColor: colors,
+              borderWidth: 0
+            }]
+          },
+          options: {
+            cutout: '70%',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return context.label + ': ' + formatRupiah(context.raw);
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
     }
 
     function handleNewTransaction(e) {
       e.preventDefault();
       const type = document.querySelector('input[name="tx_type"]:checked').value;
+      const category = type === 'out' ? document.getElementById('tx_category').value : 'Pemasukan';
       const account = document.getElementById('tx_account').value;
       const desc = document.getElementById('tx_desc').value;
       const amount = parseInt(document.getElementById('tx_amount').value) || 0;
 
+      let icon = '💳';
+      if (type === 'in') icon = '💰';
+      else if (category === 'Belanja') icon = '🛍️';
+      else if (category === 'Tagihan') icon = '📄';
+      else if (category === 'Makan') icon = '🍜';
+      else if (category === 'Hiburan') icon = '🍿';
+      else if (category === 'Transportasi') icon = '🛵';
+
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
       const newTx = {
         id: Date.now(),
         type,
+        category,
         account,
         desc,
         amount,
-        date: 'Hari ini',
-        icon: type === 'in' ? '💰' : '💳'
+        date: dateStr,
+        icon
       };
 
       transactions.unshift(newTx);
@@ -409,29 +530,34 @@
       closeModal('add-tx-modal');
       e.target.reset();
 
-      // Cloud Push (Opsional jika sync url diisi)
       pushToCloud(newTx);
     }
 
-    function triggerTestNotif() {
+    function triggerTestNotif(bank = 'Mandiri') {
       const banner = document.getElementById('ios-notification');
-      document.getElementById('notif-title').innerText = "Mutasi Livin' Mandiri (Gmail)";
-      document.getElementById('notif-body').innerText = "Debit Rp 45.000 QRIS Mandiri otomatis tercatat.";
+      const isMandiri = bank === 'Mandiri';
+      document.getElementById('notif-bank').innerText = isMandiri ? "Bank Mandiri (Maya)" : "Bank BCA (Ozik)";
+      document.getElementById('notif-title').innerText = isMandiri ? "Mutasi Livin' by Mandiri" : "Mutasi myBCA / BCA Mobile";
+      document.getElementById('notif-body').innerText = isMandiri 
+        ? "Debit Rp 45.000 Belanja QRIS otomatis tercatat." 
+        : "Debit Rp 120.000 Pembayaran Tagihan otomatis tercatat.";
       banner.classList.remove('-translate-y-36');
       banner.classList.add('translate-y-0');
 
       const autoTx = {
         id: Date.now(),
         type: 'out',
-        account: 'Bank Mandiri',
-        desc: 'QRIS Livin Mandiri (Gmail)',
-        amount: 45000,
+        category: isMandiri ? 'Belanja' : 'Tagihan',
+        account: isMandiri ? 'Bank Mandiri' : 'Bank BCA',
+        desc: isMandiri ? 'QRIS Mandiri (Maya)' : 'Tagihan BCA (Ozik)',
+        amount: isMandiri ? 45000 : 120000,
         date: 'Baru saja',
-        icon: '📱'
+        icon: isMandiri ? '🛍️' : '📄'
       };
 
       transactions.unshift(autoTx);
       calculateAndRender();
+      pushToCloud(autoTx);
 
       setTimeout(() => dismissNotif(), 5000);
     }
@@ -443,23 +569,26 @@
     }
 
     function openQuickMandiriPrompt() {
-      const nominal = prompt("Masukkan nominal pengeluaran Bank Mandiri:", "45000");
+      const nominal = prompt("Masukkan nominal pengeluaran Bank Mandiri Livin':", "50000");
       if (nominal) {
-        transactions.unshift({
+        const autoTx = {
           id: Date.now(),
           type: 'out',
+          category: 'Belanja',
           account: 'Bank Mandiri',
-          desc: 'Transaksi Mandiri Livin',
+          desc: 'Pengeluaran Mandiri Livin',
           amount: parseInt(nominal),
           date: 'Hari ini',
           icon: '🏦'
-        });
+        };
+        transactions.unshift(autoTx);
         calculateAndRender();
+        pushToCloud(autoTx);
       }
     }
 
     function resetDataDefault() {
-      if (confirm("Reset data transaksi ke default?")) {
+      if (confirm("Reset data transaksi lokal ke default?")) {
         localStorage.removeItem('seef_transactions');
         transactions = [...DEFAULT_TRANSACTIONS];
         calculateAndRender();
@@ -470,10 +599,13 @@
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
     function saveSyncConfig() {
-      const url = document.getElementById('cfg_sync_url').value;
-      localStorage.setItem('seef_sync_url', url);
-      alert('Pengaturan sinkronisasi disimpan!');
-      closeModal('db-modal');
+      const url = document.getElementById('cfg_sync_url').value.trim();
+      if (url) {
+        localStorage.setItem('seef_sync_url', url);
+        alert('URL Google Apps Script berhasil disimpan!');
+        closeModal('db-modal');
+        fetchFromCloud();
+      }
     }
 
     function pushToCloud(data) {
@@ -481,24 +613,47 @@
       if (url) {
         fetch(url, {
           method: 'POST',
+          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         }).catch(err => console.log('Sync offline'));
       }
     }
 
-    // Chart.js Setup
+    function fetchFromCloud() {
+      const url = localStorage.getItem('seef_sync_url');
+      if (!url) {
+        openModal('db-modal');
+        return;
+      }
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            transactions = data.reverse();
+            calculateAndRender();
+            alert('Data berhasil disinkronkan dari Google Sheets!');
+          }
+        })
+        .catch(err => console.log('Gagal ambil data cloud:', err));
+    }
+
     window.addEventListener('load', () => {
+      const savedUrl = localStorage.getItem('seef_sync_url');
+      if (savedUrl) {
+        document.getElementById('cfg_sync_url').value = savedUrl;
+      }
       calculateAndRender();
 
+      // Chart.js Bar Trend
       const ctxBar = document.getElementById('cashflowChart').getContext('2d');
       new Chart(ctxBar, {
         type: 'bar',
         data: {
           labels: ['Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov'],
           datasets: [
-            { label: 'Masuk', data: [0.2, 0.2, 0.2, 0.2, 0.2, 6.95], backgroundColor: '#99f6e4', borderRadius: 6 },
-            { label: 'Keluar', data: [0.1, 0.1, 0.1, 0.1, 0.1, 1.14], backgroundColor: '#fecdd3', borderRadius: 6 }
+            { label: 'Masuk', data: [4.5, 5.0, 5.2, 5.8, 6.0, 6.5], backgroundColor: '#99f6e4', borderRadius: 6 },
+            { label: 'Keluar', data: [1.2, 1.8, 2.1, 1.9, 2.4, 0.53], backgroundColor: '#fecdd3', borderRadius: 6 }
           ]
         },
         options: {
